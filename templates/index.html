@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Notas</title>
+</head>
+<body>
+    <h1>Inserir Nota do Aluno</h1>
+    <form method="POST">
+        Nome: <input type="text" name="nome" required><br><br>
+        Disciplina: <input type="text" name="disciplina" required><br><br>
+        Nota: <input type="number" step="0.01" name="nota" required><br><br>
+        Peso: <input type="number" step="0.01" name="peso" required><br><br>
+        <button type="submit">Calcular Média</button>
+    </form>
+
+    {% if resultado %}
+        <h2>Resultado</h2>
+        <p>Aluno: {{ resultado.nome }}</p>
+        <p>Disciplina: {{ resultado.disciplina }}</p>
+        <p>Média: {{ resultado.media }}</p>
+        <p>Status: {{ resultado.status }}</p>
+    {% endif %}
+</body>
+</html>
