@@ -6,20 +6,23 @@ app = Flask(__name__)
 def index():
     resultado = None
     if request.method == "POST":
-        nome = request.form["nome"]
-        disciplina = request.form["disciplina"]
-        nota = float(request.form["nota"])
-        peso = float(request.form["peso"])
+        try:
+            nome = request.form.get("nome", "")
+            disciplina = request.form.get("disciplina", "")
+            nota = float(request.form.get("nota", 0))
+            peso = float(request.form.get("peso", 1))
 
-        media = nota * peso  # simplificado (apenas uma nota por enquanto)
-        aprovado = "Aprovado" if media >= 6 else "Reprovado"
+            media = nota * peso  # Exemplo simples
+            aprovado = "Aprovado" if media >= 6 else "Reprovado"
 
-        resultado = {
-            "nome": nome,
-            "disciplina": disciplina,
-            "media": round(media, 2),
-            "status": aprovado
-        }
+            resultado = {
+                "nome": nome,
+                "disciplina": disciplina,
+                "media": round(media, 2),
+                "status": aprovado
+            }
+        except Exception as e:
+            resultado = {"erro": f"Ocorreu um erro: {e}"}
 
     return render_template("index.html", resultado=resultado)
 
