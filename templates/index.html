@@ -1,24 +1,25 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel do Professor</title>
+    <title>NotasFácil - Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <div class="form-box">
-            <h1>Painel do Professor</h1>
-            <form method="POST">
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Painel do Professor</h2>
+            <form action="/login" method="post">
                 <label for="username">Username</label>
-                <input type="text" name="username" required>
+                <input type="text" id="username" name="username" required>
 
-                <label for="senha">Senha</label>
-                <input type="password" name="senha" required>
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required>
 
                 <button type="submit">Entrar</button>
             </form>
-            <a href="#" class="esqueci-senha">Esqueceu a senha?</a>
+            <a href="#" class="forgot-password">Esqueceu a senha?</a>
+            <a href="/cadastro" class="create-account">Criar nova conta</a>
         </div>
     </div>
 </body>

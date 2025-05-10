@@ -1,30 +1,44 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
+from pymongo import MongoClient
 
 app = Flask(__name__)
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    resultado = None
-    if request.method == "POST":
-        try:
-            nome = request.form.get("nome", "")
-            disciplina = request.form.get("disciplina", "")
-            nota = float(request.form.get("nota", 0))
-            peso = float(request.form.get("peso", 1))
+# Conexão com o MongoDB local
+client = MongoClient("mongodb://localhost:27017/")
+db = client["notasfacil"]
+usuarios = db["usuarios"]
 
-            media = nota * peso  # Exemplo simples
-            aprovado = "Aprovado" if media >= 6 else "Reprovado"
+@app.route("/")
+def login():
+    return render_template("index.html", erro=None)
 
-            resultado = {
-                "nome": nome,
-                "disciplina": disciplina,
-                "media": round(media, 2),
-                "status": aprovado
-            }
-        except Exception as e:
-            resultado = {"erro": f"Ocorreu um erro: {e}"}
+@app.route("/cadastro")
+def cadastro():
+    return render_template("cadastro.html")
 
-    return render_template("index.html", resultado=resultado)
+@app.route("/registrar", methods=["POST"])
+def registrar():
+    nome = request.form["nome"]
+    email = request.form["email"]
+    senha = request.form["senha"]
+
+    usuarios.insert_one({"nome": nome, "email": email, "senha": senha})
+    return redirect(url_for("login"))
+
+@app.route("/autenticar", methods=["POST"])
+def autenticar():
+    username = request.form["username"]
+    senha = request.form["senha"]
+
+    user = usuarios.find_one({
+        "$or": [{"nome": username}, {"email": username}],
+        "senha": senha
+    })
+
+    if user:
+        return "Login realizado com sucesso!"  # Ou redirecione para outra página
+    else:
+        return render_template("index.html", erro="Senha ou username incorretos")
 
 if __name__ == "__main__":
     app.run(debug=True)
