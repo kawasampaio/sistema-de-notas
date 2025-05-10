@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel do Professor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #7b6cf6, #a26bf8);
+            color: #fff;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            position: fixed;
+            background-color: #312e81;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .sidebar a:hover {
+            text-decoration: underline;
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .card {
+            background-color: white;
+            color: black;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            max-width: 600px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .btn-voltar {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn-voltar:hover {
+            background-color: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <a href="/home">Página Inicial</a>
+        <a href="/notas">Inserir Notas</a>
+        <a href="/graficos">Ver Gráficos</a>
+        <a href="/exportar">Exportar Dados</a>
+    </div>
+
+    <div class="main">
+        <h1>Painel do Professor</h1>
+        <div class="card">
+            <h3>Último Projeto Salvo</h3>
+            {% if projeto %}
+                <p><strong>Tipo:</strong> {{ projeto.tipo }}</p>
+                <p><strong>Descrição:</strong> {{ projeto.descricao }}</p>
+                <form action="{{ url_for('continuar_projeto', id=projeto._id) }}" method="get">
+                    <button class="btn-voltar">Continuar</button>
+                </form>
+            {% else %}
+                <p>Nenhum projeto salvo recentemente.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
