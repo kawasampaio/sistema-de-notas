@@ -1,102 +1,66 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from pymongo import MongoClient
-import bcrypt
+from flask_pymongo import PyMongo
+from werkzeug.security import check_password_hash
 from bson.objectid import ObjectId
+from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
+app.secret_key = 'seu_segredo_aqui'
 
-# Conexão com o MongoDB local
-client = MongoClient("mongodb://localhost:27017/")
-db = client["notasfacil"]
-usuarios = db["usuarios"]
+# Configuração do MongoDB
+app.config["MONGO_URI"] = "mongodb://localhost:27017/professor_app"
+mongo = PyMongo(app)
 
-@app.route("/", methods=["GET", "POST"])
+# Página inicial (login)
+@app.route('/login', methods=['GET'])
+def login_page():
+    return render_template('index.html', erro=None)
+
+# Processa login
+@app.route('/login', methods=['POST'])
 def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        senha = request.form.get("senha").encode('utf-8')
+    email = request.form.get('username')
+    senha = request.form.get('password')
 
-        usuario = usuarios.find_one({
-            "$or": [{"nome": username}, {"email": username}]
-        })
+    usuario = mongo.db.usuarios.find_one({'email': email})
 
-        if usuario and bcrypt.checkpw(senha, usuario["senha"]):
-            return redirect(url_for("pagina_inicial"))
-        else:
-            erro = "Senha ou usuário incorretos"
-            return render_template("index.html", erro=erro)
-
-    return render_template("index.html", erro=None)
-
-
-@app.route("/cadastro", methods=["GET", "POST"])
-def cadastro():
-    if request.method == "POST":
-        nome = request.form.get("nome")
-        email = request.form.get("email")
-        senha = request.form.get("senha").encode('utf-8')
-        hashed = bcrypt.hashpw(senha, bcrypt.gensalt())
-
-
-        if not nome or not email or not senha:
-            return "Preencha todos os campos"
-
-        usuarios.insert_one({
-            "nome": nome,
-            "email": email,
-            "senha": senha
-        })
-
-        return redirect(url_for("login"))
-    
-    return render_template("cadastro.html")
-
-
-
-@app.route("/registrar", methods=["POST"])
-def registrar():
-    nome = request.form["nome"]
-    email = request.form["email"]
-    senha = request.form["senha"]
-
-    usuarios.insert_one({"nome": nome, "email": email, "senha": senha})
-    return redirect(url_for("login"))
-
-@app.route("/autenticar", methods=["POST"])
-def autenticar():
-    username = request.form["username"]
-    senha = request.form["senha"]
-
-    user = usuarios.find_one({
-        "$or": [{"nome": username}, {"email": username}],
-        "senha": senha
-    })
-
-    if user:
-        return "Login realizado com sucesso!"  # Ou redirecione para outra página
+    if usuario and check_password_hash(usuario['senha'], senha):
+        session['usuario'] = str(usuario['_id'])
+        return redirect(url_for('home'))
     else:
-        return render_template("index.html", erro="Senha ou username incorretos")
-    
-@app.route("/home")
-def pagina_inicial():
-    user_id = session.get("user_id")
-    projeto = db.projetos.find_one({"usuario_id": user_id}, sort=[("data_modificacao", -1)])
-    return render_template("home.html", projeto=projeto)
+        return render_template('index.html', erro="Usuário ou senha inválidos")
 
-@app.route("/continuar/<id>")
-def continuar_projeto(id):
-    projeto = db.projetos.find_one({"_id": ObjectId(id)})
-    # Redireciona para a rota de edição do tipo correto
-    if projeto["tipo"] == "notas":
-        return redirect(url_for("inserir_notas", id=id))
-    elif projeto["tipo"] == "grafico":
-        return redirect(url_for("visualizar_grafico", id=id))
-    # etc.
-    return redirect(url_for("pagina_inicial"))
+# Página principal após login
+@app.route('/')
+def home():
+    if 'usuario' in session:
+        usuario = mongo.db.usuarios.find_one({'_id': ObjectId(session['usuario'])})
+        return f"Bem-vindo, {usuario['nome']}!"
+    return redirect(url_for('login_page'))
 
+# Página de cadastro
+@app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        email = request.form.get('email')
+        senha = request.form.get('senha')
 
-if __name__ == "__main__":
+        if mongo.db.usuarios.find_one({'email': email}):
+            return "Usuário já cadastrado."
+
+        senha_hash = generate_password_hash(senha)
+        mongo.db.usuarios.insert_one({
+            'nome': nome,
+            'email': email,
+            'senha': senha_hash,
+            'criado_em': datetime.now()
+        })
+        return redirect(url_for('login_page'))
+
+    return render_template('cadastro.html')
+
+if __name__ == '__main__':
     app.run(debug=True)
-
-
