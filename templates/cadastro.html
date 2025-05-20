@@ -1,28 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Cadastro - NotasFácil</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-box">
-            <h2>Cadastro</h2>
-            <form action="/cadastro" method="post">
-                <label for="nome">Nome</label>
-                <input type="text" id="nome" name="nome" required>
-
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="senha">Senha</label>
-                <input type="password" id="senha" name="senha" required>
-
-                <button type="submit">Cadastrar</button>
-            </form>
-            <a href="/" class="forgot-password">Voltar para o login</a>
-        </div>
-    </div>
+  <div class="login-container">
+    <h2>Cadastro</h2>
+    <form action="/cadastro" method="POST">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required>
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" required>
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" name="senha" required>
+      <button type="submit">Cadastrar</button>
+    </form>
+    <p><a href="{{ url_for('login') }}">Já tem uma conta? Entrar</a></p>
+  </div>
 </body>
 </html>
