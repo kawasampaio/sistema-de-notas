@@ -1,65 +1,76 @@
 body {
-    margin: 0;
-    padding: 0;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right, #6A85F1, #B084F6);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #db7dec, #83bbf6);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-}
-
-.login-container {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-}
-
-.login-box {
-    background-color: #fff;
+    margin: 0;
+  }
+  
+  .login-container {
+    background: white;
+    border-radius: 20px;
     padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 320px;
     text-align: center;
-}
-
-.login-box h2 {
-    margin-bottom: 20px;
-    font-size: 1.5em;
+    transition: all 0.3s ease;
+  }
+  
+  h2 {
+    margin-bottom: 25px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 6px;
+    text-align: left;
+    font-size: 14px;
     color: #333;
-}
-
-.login-box input {
+  }
+  
+  input[type="text"],
+  input[type="password"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
-    border-radius: 6px;
     border: 1px solid #ccc;
-}
-
-.login-box button {
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  
+  button {
     width: 100%;
-    background-color: #6B73FF;
-    color: white;
     padding: 10px;
+    background-color: #729df5;
+    color: white;
     border: none;
-    border-radius: 6px;
-    font-weight: bold;
+    border-radius: 8px;
     cursor: pointer;
-}
-
-.login-box button:hover {
-    background-color: #5563f5;
-}
-
-.forgot-password {
-    display: block;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #567de5;
+  }
+  
+  p {
     margin-top: 10px;
-    font-size: 0.9em;
-    color: #4A6FF0;
+    font-size: 13px;
+    color: #666;
+  }
+  
+  a {
     text-decoration: none;
-}
-
-.forgot-password:hover {
+    color: #729df5;
+  }
+  
+  a:hover {
     text-decoration: underline;
-}
+  }
+  
