@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel do Professor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      background: linear-gradient(135deg, #db7dec, #83bbf6);
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .painel {
+      background: #e3e3e3;
+      margin: 30px auto;
+      width: 90%;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .projeto {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 2px solid black;
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .turma {
+      font-weight: bold;
+      width: 100px;
+      border-right: 2px solid black;
+      padding-right: 10px;
+    }
+    .titulo {
+      flex: 1;
+      padding-left: 10px;
+    }
+    .data {
+      font-weight: bold;
+      font-size: 0.9em;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="painel">
+    <a href="/novo-projeto">
+        <button style="margin-bottom: 20px; padding: 10px 20px; border-radius: 8px; background-color: #729df5; color: white; border: none;">
+          Criar novo projeto
+        </button>
+      </a>
+      
+    {% for projeto in projetos %}
+    <div class="projeto">
+      <div class="turma">{{ projeto.turma }}</div>
+      <div class="titulo">{{ projeto.titulo }}</div>
+      <div class="data">Criado {{ projeto.data }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</body>
+</html>
