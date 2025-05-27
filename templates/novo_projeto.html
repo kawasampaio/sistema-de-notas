@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Novo Projeto</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 350px;
+      margin: 50px auto;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #729df5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <form action="/novo-projeto" method="POST">
+    <h2>Criar Novo Projeto</h2>
+    <label for="turma">Turma</label>
+    <input type="text" name="turma" required>
+
+    <label for="titulo">Título do Projeto</label>
+    <input type="text" name="titulo" required>
+
+    <button type="submit">Salvar</button>
+  </form>
+</body>
+</html>

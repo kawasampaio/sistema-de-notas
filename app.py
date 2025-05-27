@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from pymongo import MongoClient
 from datetime import datetime
+from bson.objectid import ObjectId
+
 
 app = Flask(__name__)
 app.secret_key = "alguma_chave_secreta"
@@ -96,6 +98,33 @@ def cadastro():
     
     return render_template('cadastro.html')
 
+@app.route('/projeto/<id>', methods=['GET', 'POST'])
+def detalhes_projeto(id):
+    projeto = projetos.find_one({"_id": ObjectId(id)})
 
+    if not projeto:
+        return "Projeto não encontrado", 404
+
+    if request.method == 'POST':
+        alunos = []
+        for i in range(10):
+            nome = request.form.get(f"aluno_{i}")
+            nota1 = request.form.get(f"nota1_{i}")
+            nota2 = request.form.get(f"nota2_{i}")
+            media = request.form.get(f"media_{i}")
+            if nome:
+                alunos.append({
+                    "nome": nome,
+                    "nota1": float(nota1 or 0),
+                    "nota2": float(nota2 or 0),
+                    "media": float(media or 0)
+                })
+        projetos.update_one(
+            {"_id": ObjectId(id)},
+            {"$set": {"alunos": alunos}}
+        )
+        return redirect(url_for('detalhes_projeto', id=id))
+
+    return render_template("projeto_detalhes.html", projeto=projeto)
 if __name__ == '__main__':
     app.run(debug=True)
