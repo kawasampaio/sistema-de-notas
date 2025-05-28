@@ -2,51 +2,140 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Projeto: {{ projeto.titulo }}</title>
+    <title>Notas - {{ projeto.titulo }}</title>
     <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4e54c8, #e94e77);
+            color: #000;
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #333;
+            padding: 10px 20px;
+            color: white;
+        }
+        .sidebar {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            width: 50px;
+            height: calc(100% - 50px);
+            background: #222;
+        }
+        .container {
+            margin-left: 60px;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            overflow: hidden;
         }
         th, td {
-            padding: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #333;
+            color: white;
+        }
+        input[type="text"], input[type="number"] {
+            width: 90%;
+            padding: 5px;
+            border-radius: 5px;
             border: 1px solid #ccc;
+        }
+        .add-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .profile-img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
         }
     </style>
 </head>
 <body>
-    <h1>Projeto: {{ projeto.titulo }} - {{ projeto.turma }}</h1>
-    <form method="POST">
-        <table>
-            <tr>
-                <th>Aluno</th>
-                <th>Nota 1</th>
-                <th>Nota 2</th>
-                <th>Média</th>
-            </tr>
-
-            {% for i in range(10) %}
-            <tr>
-                <td><input type="text" name="aluno_{{ i }}" value="{{ projeto.alunos[i].nome if projeto.alunos and i < projeto.alunos|length else '' }}"></td>
-                <td><input type="number" step="0.01" name="nota1_{{ i }}" value="{{ projeto.alunos[i].nota1 if projeto.alunos and i < projeto.alunos|length else '' }}"></td>
-                <td><input type="number" step="0.01" name="nota2_{{ i }}" value="{{ projeto.alunos[i].nota2 if projeto.alunos and i < projeto.alunos|length else '' }}"></td>
-                <td><input type="number" step="0.01" name="media_{{ i }}" readonly value="{{ projeto.alunos[i].media if projeto.alunos and i < projeto.alunos|length else '' }}"></td>
-            </tr>
-            {% endfor %}
-        </table>
-        <br>
-        <button type="submit">Salvar Notas</button>
-    </form>
+    <div class="topbar">
+        <div>Menu</div>
+        <div><strong>NOTAS</strong></div>
+        <div><div class="profile-img"></div></div>
+    </div>
+    <div class="sidebar"></div>
+    <div class="container">
+        <form method="POST">
+            <table id="tabela-alunos">
+                <tr>
+                    <th>Aluno</th>
+                    <th>1 Bimestre</th>
+                    <th>Peso</th>
+                    <th>2 Bimestre</th>
+                    <th>Peso</th>
+                    <th>3 Bimestre</th>
+                    <th>Peso</th>
+                    <th>4 Bimestre</th>
+                    <th>Peso</th>
+                    <th>Média</th>
+                </tr>
+                {% for i in range(10) %}
+                <tr>
+                    <td><input type="text" name="aluno_{{ i }}"></td>
+                    <td><input type="number" step="0.1" name="nota1_{{ i }}"></td>
+                    <td><input type="number" step="0.1" name="peso1_{{ i }}"></td>
+                    <td><input type="number" step="0.1" name="nota2_{{ i }}"></td>
+                    <td><input type="number" step="0.1" name="peso2_{{ i }}"></td>
+                    <td><input type="number" step="0.1" name="nota3_{{ i }}"></td>
+                    <td><input type="number" step="0.1" name="peso3_{{ i }}"></td>
+                    <td><input type="number" step="0.1" name="nota4_{{ i }}"></td>
+                    <td><input type="number" step="0.1" name="peso4_{{ i }}"></td>
+                    <td><input type="number" step="0.1" name="media_{{ i }}"></td>
+                </tr>
+                {% endfor %}
+            </table>
+            <button type="button" class="add-btn" onclick="adicionarLinha()">Adicionar Aluno</button>
+            <button type="submit" class="add-btn">Salvar</button>
+        </form>
+    </div>
 
     <script>
-        document.addEventListener('input', function () {
-            for (let i = 0; i < 10; i++) {
-                let nota1 = parseFloat(document.querySelector(`[name="nota1_${i}"]`).value) || 0;
-                let nota2 = parseFloat(document.querySelector(`[name="nota2_${i}"]`).value) || 0;
-                let media = (nota1 + nota2) / 2;
-                document.querySelector(`[name="media_${i}"]`).value = media.toFixed(2);
-            }
-        });
+        let contador = 10;
+
+        function adicionarLinha() {
+            const tabela = document.getElementById("tabela-alunos");
+            const linha = document.createElement("tr");
+            linha.innerHTML = `
+                <td><input type="text" name="aluno_${contador}"></td>
+                <td><input type="number" step="0.1" name="nota1_${contador}"></td>
+                <td><input type="number" step="0.1" name="peso1_${contador}"></td>
+                <td><input type="number" step="0.1" name="nota2_${contador}"></td>
+                <td><input type="number" step="0.1" name="peso2_${contador}"></td>
+                <td><input type="number" step="0.1" name="nota3_${contador}"></td>
+                <td><input type="number" step="0.1" name="peso3_${contador}"></td>
+                <td><input type="number" step="0.1" name="nota4_${contador}"></td>
+                <td><input type="number" step="0.1" name="peso4_${contador}"></td>
+                <td><input type="number" step="0.1" name="media_${contador}"></td>
+            `;
+            tabela.appendChild(linha);
+            contador++;
+        }
     </script>
 </body>
 </html>
