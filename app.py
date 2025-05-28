@@ -110,15 +110,21 @@ def detalhes_projeto(id):
         for i in range(10):
             nome = request.form.get(f"aluno_{i}")
             nota1 = request.form.get(f"nota1_{i}")
+            peso1 = request.form.get(f"peso1_{i}")
             nota2 = request.form.get(f"nota2_{i}")
+            peso2 = request.form.get(f"peso2_{i}")
             media = request.form.get(f"media_{i}")
+
             if nome:
                 alunos.append({
                     "nome": nome,
                     "nota1": float(nota1 or 0),
+                    "peso1": float(peso1 or 1),
                     "nota2": float(nota2 or 0),
+                    "peso2": float(peso2 or 1),
                     "media": float(media or 0)
                 })
+
         projetos.update_one(
             {"_id": ObjectId(id)},
             {"$set": {"alunos": alunos}}
@@ -126,5 +132,6 @@ def detalhes_projeto(id):
         return redirect(url_for('detalhes_projeto', id=id))
 
     return render_template("projeto_detalhes.html", projeto=projeto)
+
 if __name__ == '__main__':
     app.run(debug=True)

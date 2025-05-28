@@ -2,140 +2,104 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Notas - {{ projeto.titulo }}</title>
+    <title>Projeto: {{ projeto.titulo }}</title>
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #4e54c8, #e94e77);
+            font-family: sans-serif;
+            background: linear-gradient(to right, #4f59f1, #f04adf);
             color: #000;
         }
-        .topbar {
+        header {
+            background: #333;
+            color: white;
+            padding: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #333;
-            padding: 10px 20px;
-            color: white;
         }
         .sidebar {
-            position: fixed;
-            top: 50px;
-            left: 0;
-            width: 50px;
-            height: calc(100% - 50px);
+            width: 60px;
             background: #222;
+            height: 100vh;
+            position: fixed;
         }
-        .container {
+        .content {
             margin-left: 60px;
             padding: 20px;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
         table {
             width: 100%;
+            background: rgba(255, 255, 255, 0.1);
             border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            overflow: hidden;
         }
         th, td {
             padding: 10px;
             text-align: center;
         }
-        th {
-            background: #333;
-            color: white;
+        input {
+            width: 60px;
+            padding: 4px;
         }
-        input[type="text"], input[type="number"] {
-            width: 90%;
-            padding: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        .add-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .profile-img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: white;
+        .media {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="topbar">
-        <div>Menu</div>
-        <div><strong>NOTAS</strong></div>
-        <div><div class="profile-img"></div></div>
-    </div>
+    <header>
+        <h2>NOTAS - {{ projeto.titulo }}</h2>
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Perfil" width="30">
+    </header>
     <div class="sidebar"></div>
-    <div class="container">
+
+    <div class="content">
         <form method="POST">
-            <table id="tabela-alunos">
+            <table border="1">
                 <tr>
                     <th>Aluno</th>
-                    <th>1 Bimestre</th>
+                    <th>1º Bimestre</th>
                     <th>Peso</th>
-                    <th>2 Bimestre</th>
-                    <th>Peso</th>
-                    <th>3 Bimestre</th>
-                    <th>Peso</th>
-                    <th>4 Bimestre</th>
+                    <th>2º Bimestre</th>
                     <th>Peso</th>
                     <th>Média</th>
                 </tr>
                 {% for i in range(10) %}
                 <tr>
-                    <td><input type="text" name="aluno_{{ i }}"></td>
-                    <td><input type="number" step="0.1" name="nota1_{{ i }}"></td>
-                    <td><input type="number" step="0.1" name="peso1_{{ i }}"></td>
-                    <td><input type="number" step="0.1" name="nota2_{{ i }}"></td>
-                    <td><input type="number" step="0.1" name="peso2_{{ i }}"></td>
-                    <td><input type="number" step="0.1" name="nota3_{{ i }}"></td>
-                    <td><input type="number" step="0.1" name="peso3_{{ i }}"></td>
-                    <td><input type="number" step="0.1" name="nota4_{{ i }}"></td>
-                    <td><input type="number" step="0.1" name="peso4_{{ i }}"></td>
-                    <td><input type="number" step="0.1" name="media_{{ i }}"></td>
+                    <td><input type="text" name="aluno_{{i}}" value="{{ projeto.alunos[i].nome if projeto.alunos and projeto.alunos|length > i }}"></td>
+                    <td><input type="number" name="nota1_{{i}}" step="0.1" value="{{ projeto.alunos[i].nota1 if projeto.alunos and projeto.alunos|length > i }}"></td>
+                    <td><input type="number" name="peso1_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso1 if projeto.alunos and projeto.alunos|length > i }}"></td>
+                    <td><input type="number" name="nota2_{{i}}" step="0.1" value="{{ projeto.alunos[i].nota2 if projeto.alunos and projeto.alunos|length > i }}"></td>
+                    <td><input type="number" name="peso2_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso2 if projeto.alunos and projeto.alunos|length > i }}"></td>
+                    <td><input type="number" name="media_{{i}}" readonly class="media-field"></td>
                 </tr>
                 {% endfor %}
             </table>
-            <button type="button" class="add-btn" onclick="adicionarLinha()">Adicionar Aluno</button>
-            <button type="submit" class="add-btn">Salvar</button>
+            <button type="submit">Salvar</button>
         </form>
     </div>
 
     <script>
-        let contador = 10;
+        function calcularMedia() {
+            const linhas = document.querySelectorAll('table tr');
+            linhas.forEach((linha, index) => {
+                if (index === 0) return; // pula cabeçalho
+                const inputs = linha.querySelectorAll('input');
+                const nota1 = parseFloat(inputs[1].value) || 0;
+                const peso1 = parseFloat(inputs[2].value) || 1;
+                const nota2 = parseFloat(inputs[3].value) || 0;
+                const peso2 = parseFloat(inputs[4].value) || 1;
 
-        function adicionarLinha() {
-            const tabela = document.getElementById("tabela-alunos");
-            const linha = document.createElement("tr");
-            linha.innerHTML = `
-                <td><input type="text" name="aluno_${contador}"></td>
-                <td><input type="number" step="0.1" name="nota1_${contador}"></td>
-                <td><input type="number" step="0.1" name="peso1_${contador}"></td>
-                <td><input type="number" step="0.1" name="nota2_${contador}"></td>
-                <td><input type="number" step="0.1" name="peso2_${contador}"></td>
-                <td><input type="number" step="0.1" name="nota3_${contador}"></td>
-                <td><input type="number" step="0.1" name="peso3_${contador}"></td>
-                <td><input type="number" step="0.1" name="nota4_${contador}"></td>
-                <td><input type="number" step="0.1" name="peso4_${contador}"></td>
-                <td><input type="number" step="0.1" name="media_${contador}"></td>
-            `;
-            tabela.appendChild(linha);
-            contador++;
+                const media = (nota1 * peso1 + nota2 * peso2) / (peso1 + peso2);
+                inputs[5].value = media.toFixed(2);
+            });
         }
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calcularMedia);
+        });
+
+        window.onload = calcularMedia;
     </script>
 </body>
 </html>
