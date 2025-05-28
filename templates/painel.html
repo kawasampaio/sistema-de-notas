@@ -51,13 +51,15 @@
         </button>
       </a>
       
-    {% for projeto in projetos %}
-    <div class="projeto">
-      <div class="turma">{{ projeto.turma }}</div>
-      <div class="titulo">{{ projeto.titulo }}</div>
-      <div class="data">Criado {{ projeto.data }}</div>
-    </div>
-    {% endfor %}
+      {% for projeto in projetos %}
+      <a href="{{ url_for('detalhes_projeto', id=projeto._id) }}" style="text-decoration: none; color: black;">
+          <div class="projeto">
+              <strong>{{ projeto.turma }}</strong> | {{ projeto.descricao }}
+              <span style="float: right;">Criado {{ projeto.data_criacao }}</span>
+          </div>
+      </a>
+      {% endfor %}
+  
   </div>
 </body>
 </html>
