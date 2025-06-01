@@ -52,7 +52,7 @@
       </a>
       
       {% for projeto in projetos %}
-      <a href="{{ url_for('detalhes_projeto', id=projeto._id) }}" style="text-decoration: none; color: black;">
+      <a href="{{ url_for('projeto_detalhes', id=projeto._id) }}" style="text-decoration: none; color: black;">
           <div class="projeto">
               <strong>{{ projeto.turma }}</strong> | {{ projeto.descricao }}
               <span style="float: right;">Criado {{ projeto.data_criacao }}</span>

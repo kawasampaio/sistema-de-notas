@@ -98,40 +98,53 @@ def cadastro():
     
     return render_template('cadastro.html')
 
-@app.route('/projeto/<id>', methods=['GET', 'POST'])
-def detalhes_projeto(id):
+def to_float(value):
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return 0.0
+
+def calcular_media(n1, p1, n2, p2, n3, p3, n4, p4):
+    soma_pesos = p1 + p2 + p3 + p4
+    if soma_pesos == 0:
+        return 0
+    soma_notas = (n1 * p1) + (n2 * p2) + (n3 * p3) + (n4 * p4)
+    return round(soma_notas / soma_pesos, 2)
+
+@app.route("/projeto/<id>", methods=["GET", "POST"])
+def projeto_detalhes(id):
     projeto = projetos.find_one({"_id": ObjectId(id)})
 
-    if not projeto:
-        return "Projeto não encontrado", 404
-
-    if request.method == 'POST':
+    if request.method == "POST":
         alunos = []
         for i in range(10):
             nome = request.form.get(f"aluno_{i}")
-            nota1 = request.form.get(f"nota1_{i}")
-            peso1 = request.form.get(f"peso1_{i}")
-            nota2 = request.form.get(f"nota2_{i}")
-            peso2 = request.form.get(f"peso2_{i}")
-            media = request.form.get(f"media_{i}")
-
             if nome:
+                nota1 = to_float(request.form.get(f"nota1_{i}"))
+                peso1 = to_float(request.form.get(f"peso1_{i}"))
+                nota2 = to_float(request.form.get(f"nota2_{i}"))
+                peso2 = to_float(request.form.get(f"peso2_{i}"))
+                nota3 = to_float(request.form.get(f"nota3_{i}"))
+                peso3 = to_float(request.form.get(f"peso3_{i}"))
+                nota4 = to_float(request.form.get(f"nota4_{i}"))
+                peso4 = to_float(request.form.get(f"peso4_{i}"))
+
+                media = calcular_media(nota1, peso1, nota2, peso2, nota3, peso3, nota4, peso4)
+
                 alunos.append({
                     "nome": nome,
-                    "nota1": float(nota1 or 0),
-                    "peso1": float(peso1 or 1),
-                    "nota2": float(nota2 or 0),
-                    "peso2": float(peso2 or 1),
-                    "media": float(media or 0)
+                    "nota1": nota1, "peso1": peso1,
+                    "nota2": nota2, "peso2": peso2,
+                    "nota3": nota3, "peso3": peso3,
+                    "nota4": nota4, "peso4": peso4,
+                    "media": media
                 })
 
-        projetos.update_one(
-            {"_id": ObjectId(id)},
-            {"$set": {"alunos": alunos}}
-        )
-        return redirect(url_for('detalhes_projeto', id=id))
+        projetos.update_one({"_id": ObjectId(id)}, {"$set": {"alunos": alunos}})
+        return redirect(url_for("projeto_detalhes", id=id))
 
     return render_template("projeto_detalhes.html", projeto=projeto)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

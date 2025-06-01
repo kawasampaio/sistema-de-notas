@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Projeto: {{ projeto.titulo }}</title>
+    <title>NOTAS</title>
     <style>
         body {
             margin: 0;
@@ -10,6 +10,7 @@
             background: linear-gradient(to right, #4f59f1, #f04adf);
             color: #000;
         }
+
         header {
             background: #333;
             color: white;
@@ -18,29 +19,57 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .sidebar {
             width: 60px;
             background: #222;
             height: 100vh;
             position: fixed;
         }
+
         .content {
             margin-left: 60px;
             padding: 20px;
         }
+
         table {
             width: 100%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.3);
             border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
         }
+
         th, td {
-            padding: 10px;
+            padding: 8px;
             text-align: center;
+            background: rgba(255, 255, 255, 0.4);
         }
+
         input {
             width: 60px;
             padding: 4px;
+            border-radius: 4px;
+            border: none;
+            text-align: center;
         }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
         .media {
             font-weight: bold;
         }
@@ -48,9 +77,11 @@
 </head>
 <body>
     <header>
-        <h2>NOTAS - {{ projeto.titulo }}</h2>
-        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Perfil" width="30">
+        <div>Menu</div>
+        <h2>NOTAS</h2>
+        <div style="width: 30px; height: 30px; background: white; border-radius: 50%;"></div>
     </header>
+
     <div class="sidebar"></div>
 
     <div class="content">
@@ -58,10 +89,10 @@
             <table border="1">
                 <tr>
                     <th>Aluno</th>
-                    <th>1º Bimestre</th>
-                    <th>Peso</th>
-                    <th>2º Bimestre</th>
-                    <th>Peso</th>
+                    <th>1 Bimestre</th><th>Peso</th>
+                    <th>2 Bimestre</th><th>Peso</th>
+                    <th>3 Bimestre</th><th>Peso</th>
+                    <th>4 Bimestre</th><th>Peso</th>
                     <th>Média</th>
                 </tr>
                 {% for i in range(10) %}
@@ -71,35 +102,59 @@
                     <td><input type="number" name="peso1_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso1 if projeto.alunos and projeto.alunos|length > i }}"></td>
                     <td><input type="number" name="nota2_{{i}}" step="0.1" value="{{ projeto.alunos[i].nota2 if projeto.alunos and projeto.alunos|length > i }}"></td>
                     <td><input type="number" name="peso2_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso2 if projeto.alunos and projeto.alunos|length > i }}"></td>
+                    <td><input type="number" name="nota3_{{i}}" step="0.1" value="{{ projeto.alunos[i].nota3 if projeto.alunos and projeto.alunos|length > i }}"></td>
+                    <td><input type="number" name="peso3_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso3 if projeto.alunos and projeto.alunos|length > i }}"></td>
+                    <td><input type="number" name="nota4_{{i}}" step="0.1" value="{{ projeto.alunos[i].nota4 if projeto.alunos and projeto.alunos|length > i }}"></td>
+                    <td><input type="number" name="peso4_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso4 if projeto.alunos and projeto.alunos|length > i }}"></td>
                     <td><input type="number" name="media_{{i}}" readonly class="media-field"></td>
                 </tr>
                 {% endfor %}
             </table>
-            <button type="submit">Salvar</button>
+
+            <div class="buttons">
+                <button type="button">Adicionar Aluno</button>
+                <button type="submit">Salvar</button>
+            </div>
         </form>
     </div>
 
     <script>
-        function calcularMedia() {
+        function calcularMedias() {
             const linhas = document.querySelectorAll('table tr');
             linhas.forEach((linha, index) => {
-                if (index === 0) return; // pula cabeçalho
+                if (index === 0) return;
                 const inputs = linha.querySelectorAll('input');
-                const nota1 = parseFloat(inputs[1].value) || 0;
-                const peso1 = parseFloat(inputs[2].value) || 1;
-                const nota2 = parseFloat(inputs[3].value) || 0;
-                const peso2 = parseFloat(inputs[4].value) || 1;
 
-                const media = (nota1 * peso1 + nota2 * peso2) / (peso1 + peso2);
-                inputs[5].value = media.toFixed(2);
+                const notas = [
+                    parseFloat(inputs[1].value) || 0,
+                    parseFloat(inputs[3].value) || 0,
+                    parseFloat(inputs[5].value) || 0,
+                    parseFloat(inputs[7].value) || 0
+                ];
+                const pesos = [
+                    parseFloat(inputs[2].value) || 1,
+                    parseFloat(inputs[4].value) || 1,
+                    parseFloat(inputs[6].value) || 1,
+                    parseFloat(inputs[8].value) || 1
+                ];
+
+                let somaNotas = 0;
+                let somaPesos = 0;
+                for (let i = 0; i < 4; i++) {
+                    somaNotas += notas[i] * pesos[i];
+                    somaPesos += pesos[i];
+                }
+
+                const media = somaPesos > 0 ? (somaNotas / somaPesos) : 0;
+                inputs[9].value = media.toFixed(2);
             });
         }
 
         document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', calcularMedia);
+            input.addEventListener('input', calcularMedias);
         });
 
-        window.onload = calcularMedia;
+        window.onload = calcularMedias;
     </script>
 </body>
 </html>
