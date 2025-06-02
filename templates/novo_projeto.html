@@ -5,12 +5,21 @@
   <title>Novo Projeto</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
+    body {
+      background: linear-gradient(to bottom right, #c27cf1, #a2c8f0);
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
     form {
       background: white;
       padding: 30px;
       border-radius: 10px;
-      width: 350px;
-      margin: 50px auto;
+      width: 400px;
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
     input, textarea {
@@ -29,14 +38,25 @@
       border: none;
       border-radius: 8px;
       font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #5a8af0;
     }
   </style>
 </head>
 <body>
   <form action="/novo-projeto" method="POST">
     <h2>Criar Novo Projeto</h2>
+
     <label for="turma">Turma</label>
     <input type="text" name="turma" required>
+
+    <label for="serie">Série</label>
+    <input type="text" name="serie" required>
+
+    <label for="materia">Matéria</label>
+    <input type="text" name="materia" required>
 
     <label for="titulo">Título do Projeto</label>
     <input type="text" name="titulo" required>

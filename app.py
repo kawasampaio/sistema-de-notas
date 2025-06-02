@@ -45,9 +45,11 @@ def do_login():
 def painel():
     usuario_id = session.get("usuario_id")
     if not usuario_id:
-        return redirect(url_for('login'))  # segurança: redireciona se não estiver logado
+        return redirect(url_for('login'))
+
     lista_projetos = list(projetos.find({"usuario_id": usuario_id}))
     return render_template('painel.html', projetos=lista_projetos)
+
 
 
 @app.route('/novo-projeto', methods=['GET', 'POST'])
@@ -59,18 +61,23 @@ def novo_projeto():
 
         turma = request.form['turma']
         titulo = request.form['titulo']
+        serie = request.form['serie']
+        materia = request.form['materia']
         data = datetime.now().strftime("%d/%m/%Y")
-        
+
         projetos.insert_one({
             "usuario_id": usuario_id,
             "turma": turma,
             "titulo": titulo,
-            "data": data
+            "serie": serie,
+            "materia": materia,
+            "data_ultima_edicao": data
         })
-        
+
         return redirect('/painel')
-    
+
     return render_template('novo_projeto.html')
+
 
 
 
