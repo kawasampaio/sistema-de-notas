@@ -66,7 +66,8 @@
 
         .buttons {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             margin-top: 20px;
         }
 
@@ -89,23 +90,19 @@
             <table border="1">
                 <tr>
                     <th>Aluno</th>
-                    <th>1 Bimestre</th><th>Peso</th>
-                    <th>2 Bimestre</th><th>Peso</th>
-                    <th>3 Bimestre</th><th>Peso</th>
-                    <th>4 Bimestre</th><th>Peso</th>
+                    <th>1 Bimestre</th>
+                    <th>2 Bimestre</th>
+                    <th>3 Bimestre</th>
+                    <th>4 Bimestre</th>
                     <th>Média</th>
                 </tr>
                 {% for i in range(10) %}
                 <tr>
                     <td><input type="text" name="aluno_{{i}}" value="{{ projeto.alunos[i].nome if projeto.alunos and projeto.alunos|length > i }}"></td>
                     <td><input type="number" name="nota1_{{i}}" step="0.1" value="{{ projeto.alunos[i].nota1 if projeto.alunos and projeto.alunos|length > i }}"></td>
-                    <td><input type="number" name="peso1_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso1 if projeto.alunos and projeto.alunos|length > i }}"></td>
                     <td><input type="number" name="nota2_{{i}}" step="0.1" value="{{ projeto.alunos[i].nota2 if projeto.alunos and projeto.alunos|length > i }}"></td>
-                    <td><input type="number" name="peso2_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso2 if projeto.alunos and projeto.alunos|length > i }}"></td>
                     <td><input type="number" name="nota3_{{i}}" step="0.1" value="{{ projeto.alunos[i].nota3 if projeto.alunos and projeto.alunos|length > i }}"></td>
-                    <td><input type="number" name="peso3_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso3 if projeto.alunos and projeto.alunos|length > i }}"></td>
                     <td><input type="number" name="nota4_{{i}}" step="0.1" value="{{ projeto.alunos[i].nota4 if projeto.alunos and projeto.alunos|length > i }}"></td>
-                    <td><input type="number" name="peso4_{{i}}" step="0.1" value="{{ projeto.alunos[i].peso4 if projeto.alunos and projeto.alunos|length > i }}"></td>
                     <td><input type="number" name="media_{{i}}" readonly class="media-field"></td>
                 </tr>
                 {% endfor %}
@@ -127,26 +124,13 @@
 
                 const notas = [
                     parseFloat(inputs[1].value) || 0,
+                    parseFloat(inputs[2].value) || 0,
                     parseFloat(inputs[3].value) || 0,
-                    parseFloat(inputs[5].value) || 0,
-                    parseFloat(inputs[7].value) || 0
-                ];
-                const pesos = [
-                    parseFloat(inputs[2].value) || 1,
-                    parseFloat(inputs[4].value) || 1,
-                    parseFloat(inputs[6].value) || 1,
-                    parseFloat(inputs[8].value) || 1
+                    parseFloat(inputs[4].value) || 0
                 ];
 
-                let somaNotas = 0;
-                let somaPesos = 0;
-                for (let i = 0; i < 4; i++) {
-                    somaNotas += notas[i] * pesos[i];
-                    somaPesos += pesos[i];
-                }
-
-                const media = somaPesos > 0 ? (somaNotas / somaPesos) : 0;
-                inputs[9].value = media.toFixed(2);
+                const media = (notas[0] + notas[1] + notas[2] + notas[3]) / 4;
+                inputs[5].value = media.toFixed(2);
             });
         }
 
