@@ -111,12 +111,10 @@ def to_float(value):
     except (ValueError, TypeError):
         return 0.0
 
-def calcular_media(n1, p1, n2, p2, n3, p3, n4, p4):
-    soma_pesos = p1 + p2 + p3 + p4
-    if soma_pesos == 0:
-        return 0
-    soma_notas = (n1 * p1) + (n2 * p2) + (n3 * p3) + (n4 * p4)
-    return round(soma_notas / soma_pesos, 2)
+def calcular_media(n1,n2, n3, n4,):
+
+    soma_notas = n1  + n2 + n3  + n4 
+    return round(soma_notas / 4)
 
 @app.route("/projeto/<id>", methods=["GET", "POST"])
 def projeto_detalhes(id):
@@ -127,23 +125,19 @@ def projeto_detalhes(id):
         for i in range(10):
             nome = request.form.get(f"aluno_{i}")
             if nome:
-                nota1 = to_float(request.form.get(f"nota1_{i}"))
-                peso1 = to_float(request.form.get(f"peso1_{i}"))
-                nota2 = to_float(request.form.get(f"nota2_{i}"))
-                peso2 = to_float(request.form.get(f"peso2_{i}"))
-                nota3 = to_float(request.form.get(f"nota3_{i}"))
-                peso3 = to_float(request.form.get(f"peso3_{i}"))
-                nota4 = to_float(request.form.get(f"nota4_{i}"))
-                peso4 = to_float(request.form.get(f"peso4_{i}"))
+                nota1 = to_float(request.form.get(f"nota1_{i}"))       
+                nota2 = to_float(request.form.get(f"nota2_{i}"))            
+                nota3 = to_float(request.form.get(f"nota3_{i}"))               
+                nota4 = to_float(request.form.get(f"nota4_{i}"))              
 
-                media = calcular_media(nota1, peso1, nota2, peso2, nota3, peso3, nota4, peso4)
+                media = calcular_media(nota1,nota2,nota3,nota4)
 
                 alunos.append({
                     "nome": nome,
-                    "nota1": nota1, "peso1": peso1,
-                    "nota2": nota2, "peso2": peso2,
-                    "nota3": nota3, "peso3": peso3,
-                    "nota4": nota4, "peso4": peso4,
+                    "nota1": nota1, 
+                    "nota2": nota2, 
+                    "nota3": nota3, 
+                    "nota4": nota4, 
                     "media": media
                 })
 
@@ -151,6 +145,39 @@ def projeto_detalhes(id):
         return redirect(url_for("projeto_detalhes", id=id))
 
     return render_template("projeto_detalhes.html", projeto=projeto)
+
+@app.route('/gerar-boletim', methods=['GET', 'POST'])
+def gerar_boletim():
+    if request.method == 'POST':
+        aluno = request.form['aluno'].strip().lower()
+        turma = request.form['turma'].strip().lower()
+        serie = request.form['serie'].strip().upper()
+        bimestre = request.form['bimestre'].strip()
+
+        client = MongoClient('mongodb://localhost:27017/')
+        db = client['meu_banco']
+        colecao = db['projetos']
+
+        # Corrigindo para buscar por titulo, turma, serie, materia
+        documento = colecao.find_one({
+            'turma': turma,
+            'serie': serie,
+            'titulo': bimestre  # ex: "1"
+        })
+
+        if documento:
+            # Procurar aluno dentro da lista de alunos
+            for aluno_info in documento['alunos']:
+                if aluno_info['nome'].strip().lower() == aluno:
+                    return render_template('boletim.html', dados=aluno_info, materia=documento['materia'])
+
+            return "Aluno não encontrado nesse bimestre/projeto."
+        else:
+            return "Boletim não encontrado. Verifique os dados inseridos."
+
+    return render_template('boletim.html')
+
+
 
 
 if __name__ == '__main__':
