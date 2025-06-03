@@ -44,6 +44,29 @@
   </style>
 </head>
 <body>
+ 
+  <!-- Botão Hamburguer -->
+<div class="hamburguer" onclick="toggleSidebar()">☰</div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="menu">
+      <a href="/painel" class="menu-item">📋 Painel Notas</a>
+      <a href="/graficos" class="menu-item">📊 Gráficos</a>
+      <a href="/boletim" class="menu-item">📝 Gerar Boletim</a>
+    </div>
+  
+    <div class="logout">
+      <a href="/logout" class="menu-item">🚪 Logout</a>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('show');
+    }
+  </script>
+  
   <div class="painel">
     <a href="/novo-projeto">
         <button style="margin-bottom: 20px; padding: 10px 20px; border-radius: 8px; background-color: #729df5; color: white; border: none;">

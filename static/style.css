@@ -75,4 +75,83 @@ input[type="email"] {
   a:hover {
     text-decoration: underline;
   }
+  /* Botão Hamburguer */
+.hamburguer {
+  font-size: 30px;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  cursor: pointer;
+  z-index: 1001;
+  color: white;
+  background-color: #1e1e1e;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Botão Hamburguer */
+.hamburguer {
+  font-size: 30px;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  cursor: pointer;
+  z-index: 1001;
+  color: white;
+  background-color: #1e1e1e;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.hamburguer {
+  font-size: 30px;
+  cursor: pointer;
+  padding: 10px;
+  color: white;
+  background-color: #333;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px; /* Oculto inicialmente */
+  width: 250px;
+  height: 100%;
+  background-color: #111;
+  color: white;
+  padding-top: 60px;
+  transition: left 0.3s;
+  z-index: 999;
+}
+
+.sidebar.show {
+  left: 0;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-left: 20px;
+}
+
+.menu-item {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.menu-item:hover {
+  text-decoration: underline;
+}
+
+.logout {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+
+
   
