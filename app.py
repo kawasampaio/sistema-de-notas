@@ -153,32 +153,26 @@ def gerar_boletim():
         turma = request.form['turma'].strip().lower()
         serie = request.form['serie'].strip().upper()
         bimestre = request.form['bimestre'].strip()
+        materia = request.form['materia'].strip().capitalize()
 
-        client = MongoClient('mongodb://localhost:27017/')
-        db = client['meu_banco']
-        colecao = db['projetos']
-
-        # Corrigindo para buscar por titulo, turma, serie, materia
-        documento = colecao.find_one({
+        documento = projetos.find_one({
+            'aluno': aluno,
             'turma': turma,
             'serie': serie,
-            'titulo': bimestre  # ex: "1"
+            'titulo': bimestre,
+            'materia': materia
         })
 
-        if documento:
-            # Procurar aluno dentro da lista de alunos
+        if documento and 'alunos' in documento:
             for aluno_info in documento['alunos']:
                 if aluno_info['nome'].strip().lower() == aluno:
                     return render_template('boletim.html', dados=aluno_info, materia=documento['materia'])
 
-            return "Aluno não encontrado nesse bimestre/projeto."
+            return render_template('boletim.html', erro="Aluno não encontrado neste bimestre/projeto.")
         else:
-            return "Boletim não encontrado. Verifique os dados inseridos."
+            return render_template('boletim.html', erro="Boletim não encontrado. Verifique os dados inseridos.")
 
     return render_template('boletim.html')
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,16 +1,119 @@
-<form action="/gerar-boletim" method="post">
-    <label>Nome do aluno:</label><br>
-    <input type="text" name="aluno" required><br><br>
-  
-    <label>Turma:</label><br>
-    <input type="text" name="turma" required><br><br>
-  
-    <label>Série:</label><br>
-    <input type="text" name="serie" required><br><br>
-  
-    <label>Bimestre:</label><br>
-    <input type="text" name="bimestre" required><br><br>
-  
-    <button type="submit">Gerar Boletim</button>
-  </form>
-  
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Boletim do Aluno</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #6A5ACD, #9370DB);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 420px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .boletim-info, form {
+            text-align: left;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .boletim-info p {
+            margin: 6px 0;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .erro {
+            color: red;
+            font-weight: bold;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #aaa;
+            font-size: 15px;
+        }
+
+        button {
+            background-color: #6A5ACD;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #5a4bcf;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Consulta de Boletim</h2>
+        
+        <form method="POST">
+            <label>Nome do Aluno:</label>
+            <input type="text" name="aluno" required>
+
+            <label>Turma:</label>
+            <input type="text" name="turma" required>
+
+            <label>Série:</label>
+            <input type="text" name="serie" required>
+
+            <label>Bimestre:</label>
+            <select name="bimestre" required>
+                <option value="">Selecione</option>
+                <option value="1º Bimestre">1º Bimestre</option>
+                <option value="2º Bimestre">2º Bimestre</option>
+                <option value="3º Bimestre">3º Bimestre</option>
+                <option value="4º Bimestre">4º Bimestre</option>
+            </select>
+
+            <label>Matéria:</label>
+            <input type="text" name="materia" required>
+
+            <button type="submit">Buscar</button>
+        </form>
+
+        {% if dados %}
+            <div class="boletim-info">
+                <p><span class="label">Aluno:</span> {{ dados.nome | capitalize }}</p>
+                <p><span class="label">Matéria:</span> {{ materia }}</p>
+                <p><span class="label">Nota 1:</span> {{ dados.nota1 }}</p>
+                <p><span class="label">Nota 2:</span> {{ dados.nota2 }}</p>
+                <p><span class="label">Nota 3:</span> {{ dados.nota3 }}</p>
+                <p><span class="label">Nota 4:</span> {{ dados.nota4 }}</p>
+                <p><span class="label">Média Final:</span> {{ dados.media }}</p>
+            </div>
+        {% elif erro %}
+            <p class="erro">{{ erro }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
