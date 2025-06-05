@@ -156,10 +156,9 @@ def gerar_boletim():
         materia = request.form['materia'].strip().capitalize()
 
         documento = projetos.find_one({
-            'aluno': aluno,
             'turma': turma,
             'serie': serie,
-            'titulo': bimestre,
+             'titulo': bimestre.replace("º ", ""),
             'materia': materia
         })
 
