@@ -153,12 +153,12 @@ def gerar_boletim():
         turma = request.form['turma'].strip().lower()
         serie = request.form['serie'].strip().upper()
         bimestre = request.form['bimestre'].strip()
-        materia = request.form['materia'].strip().capitalize()
+        materia = request.form['materia'].strip().lower()
 
         documento = projetos.find_one({
             'turma': turma,
             'serie': serie,
-             'titulo': bimestre.replace("º ", ""),
+            'titulo': bimestre,
             'materia': materia
         })
 
@@ -172,6 +172,7 @@ def gerar_boletim():
             return render_template('boletim.html', erro="Boletim não encontrado. Verifique os dados inseridos.")
 
     return render_template('boletim.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
