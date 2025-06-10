@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Boletim Escolar</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h2, h3 { text-align: center; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 4px;
+            text-align: center;
+        }
+        .header-info {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>BOLETIM DE APROVEITAMENTO DO ENSINO FUNDAMENTAL I</h2>
+
+    <div class="header-info">
+        <p><strong>Aluno:</strong> {{ aluno }}</p>
+        <p><strong>Ano:</strong> {{ ano }} &nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma:</strong> {{ turma }} &nbsp;&nbsp;&nbsp;&nbsp; <strong>Série:</strong> {{ serie }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">Disciplinas</th>
+                <th colspan="2">1º Bimestre</th>
+                <th colspan="2">2º Bimestre</th>
+                <th colspan="2">3º Bimestre</th>
+                <th colspan="2">4º Bimestre</th>
+                <th rowspan="2">M</th>
+                <th rowspan="2">RF</th>
+                <th rowspan="2">PF</th>
+            </tr>
+            <tr>
+                <th>Nota</th><th>Conceito</th>
+                <th>Nota</th><th>Conceito</th>
+                <th>Nota</th><th>Conceito</th>
+                <th>Nota</th><th>Conceito</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in boletim %}
+            <tr>
+                <td>{{ item.disciplina }}</td>
+                {% for b in ['1', '2', '3', '4'] %}
+                    <td>{{ item['nota' + b] if 'nota' + b in item else '' }}</td>
+                    <td>{{ item['conceito' + b] if 'conceito' + b in item else '' }}</td>
+                {% endfor %}
+                <td></td><td></td><td></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br><br>
+    <form method="post" action="/exportar-pdf">
+        <input type="hidden" name="aluno" value="{{ aluno }}">
+        <input type="hidden" name="turma" value="{{ turma }}">
+        <input type="hidden" name="serie" value="{{ serie }}">
+        <input type="hidden" name="ano" value="{{ ano }}">
+        <input type="hidden" name="bimestre" value="{{ bimestre }}">
+        <button type="submit">Exportar como PDF</button>
+    </form>
+</body>
+</html>

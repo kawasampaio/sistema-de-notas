@@ -147,29 +147,43 @@ def projeto_detalhes(id):
     return render_template("projeto_detalhes.html", projeto=projeto)
 
 @app.route('/gerar-boletim', methods=['GET', 'POST'])
-def gerar_boletim():
+def boletim_completo():
     if request.method == 'POST':
         aluno = request.form['aluno'].strip().lower()
         turma = request.form['turma'].strip().lower()
-        serie = request.form['serie'].strip().upper()
+        serie = request.form['serie'].strip()
         bimestre = request.form['bimestre'].strip()
-        materia = request.form['materia'].strip().lower()
+        ano = request.form['ano'].strip()
 
-        documento = projetos.find_one({
+        boletim = []
+        cursor = projetos.find({
             'turma': turma,
             'serie': serie,
-            'titulo': bimestre,
-            'materia': materia
+            'titulo': bimestre
         })
 
-        if documento and 'alunos' in documento:
-            for aluno_info in documento['alunos']:
-                if aluno_info['nome'].strip().lower() == aluno:
-                    return render_template('boletim.html', dados=aluno_info, materia=documento['materia'])
+        for doc in cursor:
+            aluno_info = next((a for a in doc.get('alunos', [])
+                               if a['nome'].strip().lower() == aluno), None)
+            if aluno_info:
+                nota = aluno_info.get(f'nota{bimestre}', 0)
+                conceito = (
+                    "MB" if nota >= 9 else
+                    "B" if nota >= 7 else
+                    "R" if nota >= 5 else
+                    "PF"
+                )
+                boletim.append({
+                    'disciplina': doc['materia'],
+                    'nota': nota,
+                    'conceito': conceito
+                })
 
-            return render_template('boletim.html', erro="Aluno não encontrado neste bimestre/projeto.")
-        else:
-            return render_template('boletim.html', erro="Boletim não encontrado. Verifique os dados inseridos.")
+        if not boletim:
+            return render_template('boletim.html', erro="Aluno ou dados não encontrados.")
+
+        return render_template('boletim_visual.html', aluno=aluno.title(), turma=turma,
+                               serie=serie, ano=ano, bimestre=bimestre, boletim=boletim)
 
     return render_template('boletim.html')
 
