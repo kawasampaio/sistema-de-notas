@@ -155,44 +155,63 @@ def boletim_completo():
         bimestre = request.form['bimestre'].strip()
         ano = request.form['ano'].strip()
 
-        boletim = []
+        # Determinar quais bimestres buscar
+        bimestres_anteriores = ['1', '2', '3', '4']
+        bimestres_anteriores = bimestres_anteriores[:bimestres_anteriores.index(bimestre)+1]
+
+        boletim_dict = {}
+
+        # Buscar todos os documentos dos bimestres anteriores
         cursor = projetos.find({
             'turma': turma,
             'serie': serie,
-            'titulo': bimestre
+            'titulo': {'$in': bimestres_anteriores}
         })
 
         for doc in cursor:
-            aluno_info = next((a for a in doc.get('alunos', [])
-                               if a['nome'].strip().lower() == aluno), None)
+            materia = doc['materia']
+            titulo = doc['titulo']  # bimestre
+            aluno_info = next((a for a in doc.get('alunos', []) if a['nome'].strip().lower() == aluno), None)
+
             if aluno_info:
-                nota = aluno_info.get(f'nota{bimestre}', 0)
-                media = aluno_info.get('media', '')
+                nota = aluno_info.get(f'nota{titulo}', 0)
+                media = aluno_info.get('media', nota)  # usa 'media' se houver, senão a própria nota
+
                 conceito = (
                     "MB" if nota >= 9 else
                     "B" if nota >= 7 else
                     "R" if nota >= 5 else
                     "PF"
                 )
-                boletim.append({
-                    'disciplina': doc['materia'],
-                    'notas': {
-                        '1': '', '2': '', '3': '', '4': ''
-                    },
-                    'conceitos': {
-                        '1': '', '2': '', '3': '', '4': ''
-                    }
-                })
-                boletim[-1]['notas'][bimestre] = media
-                boletim[-1]['conceitos'][bimestre] = conceito
 
-        if not boletim:
+                # Se disciplina ainda não adicionada, inicializa
+                if materia not in boletim_dict:
+                    boletim_dict[materia] = {
+                        'disciplina': materia,
+                        'notas': {'1': '', '2': '', '3': '', '4': ''},
+                        'conceitos': {'1': '', '2': '', '3': '', '4': ''}
+                    }
+
+                boletim_dict[materia]['notas'][titulo] = media
+                boletim_dict[materia]['conceitos'][titulo] = conceito
+
+        # Se nenhum dado foi encontrado
+        if not boletim_dict:
             return render_template('boletim.html', erro="Aluno ou dados não encontrados.")
 
-        return render_template('boletim_visual.html', aluno=aluno.title(), turma=turma,
-                               serie=serie, ano=ano, bimestre=bimestre, boletim=boletim)
+        # Converte para lista final
+        boletim = list(boletim_dict.values())
+
+        return render_template('boletim_visual.html',
+                               aluno=aluno.title(),
+                               turma=turma,
+                               serie=serie,
+                               ano=ano,
+                               bimestre=bimestre,
+                               boletim=boletim)
 
     return render_template('boletim.html')
+
 
 
 if __name__ == '__main__':
