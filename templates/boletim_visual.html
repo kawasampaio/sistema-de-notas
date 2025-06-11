@@ -53,12 +53,15 @@
             <tr>
                 <td>{{ item.disciplina }}</td>
                 {% for b in ['1', '2', '3', '4'] %}
-                    <td>{{ item['nota' + b] if 'nota' + b in item else '' }}</td>
-                    <td>{{ item['conceito' + b] if 'conceito' + b in item else '' }}</td>
+                    <td>{{ item.notas[b] }}</td>
+                    <td>{{ item.conceitos[b] }}</td>
                 {% endfor %}
-                <td></td><td></td><td></td>
+                <td></td> <!-- M -->
+                <td></td> <!-- RF -->
+                <td></td> <!-- PF -->
             </tr>
             {% endfor %}
+
         </tbody>
     </table>
 

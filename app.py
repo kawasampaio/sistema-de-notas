@@ -167,6 +167,7 @@ def boletim_completo():
                                if a['nome'].strip().lower() == aluno), None)
             if aluno_info:
                 nota = aluno_info.get(f'nota{bimestre}', 0)
+                media = aluno_info.get('media', '')
                 conceito = (
                     "MB" if nota >= 9 else
                     "B" if nota >= 7 else
@@ -175,9 +176,15 @@ def boletim_completo():
                 )
                 boletim.append({
                     'disciplina': doc['materia'],
-                    'nota': nota,
-                    'conceito': conceito
+                    'notas': {
+                        '1': '', '2': '', '3': '', '4': ''
+                    },
+                    'conceitos': {
+                        '1': '', '2': '', '3': '', '4': ''
+                    }
                 })
+                boletim[-1]['notas'][bimestre] = media
+                boletim[-1]['conceitos'][bimestre] = conceito
 
         if not boletim:
             return render_template('boletim.html', erro="Aluno ou dados não encontrados.")
