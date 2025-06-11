@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, render_template_string
 from pymongo import MongoClient
 from datetime import datetime
 from bson.objectid import ObjectId
+from flask import make_response
+from xhtml2pdf import pisa
+from io import BytesIO
 
 
 app = Flask(__name__)
@@ -211,6 +214,68 @@ def boletim_completo():
                                boletim=boletim)
 
     return render_template('boletim.html')
+
+@app.route('/exportar-pdf', methods=['POST'])
+def exportar_pdf():
+    aluno = request.form['aluno'].strip().lower()
+    turma = request.form['turma'].strip().lower()
+    serie = request.form['serie'].strip()
+    bimestre = request.form['bimestre'].strip()
+    ano = request.form['ano'].strip()
+
+    bimestres_anteriores = ['1', '2', '3', '4']
+    bimestres_anteriores = bimestres_anteriores[:bimestres_anteriores.index(bimestre)+1]
+
+    boletim_dict = {}
+    cursor = projetos.find({
+        'turma': turma,
+        'serie': serie,
+        'titulo': {'$in': bimestres_anteriores}
+    })
+
+    for doc in cursor:
+        materia = doc['materia']
+        titulo = doc['titulo']
+        aluno_info = next((a for a in doc.get('alunos', []) if a['nome'].strip().lower() == aluno), None)
+
+        if aluno_info:
+            nota = aluno_info.get(f'nota{titulo}', 0)
+            media = aluno_info.get('media', nota)
+            conceito = (
+                "MB" if nota >= 9 else
+                "B" if nota >= 7 else
+                "R" if nota >= 5 else
+                "PF"
+            )
+
+            if materia not in boletim_dict:
+                boletim_dict[materia] = {
+                    'disciplina': materia,
+                    'notas': {'1': '', '2': '', '3': '', '4': ''},
+                    'conceitos': {'1': '', '2': '', '3': '', '4': ''}
+                }
+
+            boletim_dict[materia]['notas'][titulo] = media
+            boletim_dict[materia]['conceitos'][titulo] = conceito
+
+    boletim = list(boletim_dict.values())
+
+    if not boletim:
+        return "Boletim não encontrado para exportação."
+
+    html = render_template('boletim_pdf.html', aluno=aluno.title(), turma=turma,
+                           serie=serie, ano=ano, boletim=boletim)
+
+    pdf = BytesIO()
+    pisa_status = pisa.CreatePDF(html, dest=pdf)
+
+    if pisa_status.err:
+        return "Erro ao gerar PDF"
+
+    response = make_response(pdf.getvalue())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename=boletim.pdf'
+    return response
 
 
 

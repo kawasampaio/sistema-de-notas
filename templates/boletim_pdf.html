@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        table, th, td { border: 1px solid black; border-collapse: collapse; }
+        th, td { padding: 5px; text-align: center; }
+        h2 { text-align: center; }
+    </style>
+</head>
+<body>
+    <h2>BOLETIM DE APROVEITAMENTO</h2>
+    <p><strong>Aluno:</strong> {{ aluno }} &nbsp;&nbsp;
+       <strong>Turma:</strong> {{ turma }} &nbsp;&nbsp;
+       <strong>Série:</strong> {{ serie }} &nbsp;&nbsp;
+       <strong>Ano:</strong> {{ ano }}</p>
+
+    <table>
+        <tr>
+            <th rowspan="2">Disciplinas</th>
+            {% for b in ['1', '2', '3', '4'] %}
+                <th colspan="2">{{ b }}º Bimestre</th>
+            {% endfor %}
+            <th rowspan="2">M</th><th rowspan="2">RF</th><th rowspan="2">PF</th>
+        </tr>
+        <tr>
+            {% for b in ['1', '2', '3', '4'] %}
+                <th>Nota</th><th>Conceito</th>
+            {% endfor %}
+        </tr>
+        {% for item in boletim %}
+        <tr>
+            <td>{{ item.disciplina }}</td>
+            {% for b in ['1', '2', '3', '4'] %}
+                <td>{{ item.notas[b] }}</td>
+                <td>{{ item.conceitos[b] }}</td>
+            {% endfor %}
+            <td></td><td></td><td></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
